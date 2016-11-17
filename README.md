@@ -12,3 +12,11 @@ PN532 connections:
 |IRQ | p18 (connected but not used) |
 |5V (not 3V) | Vout (3V3) |
 | GND | GND |
+
+## Quick build and deploy
+
+Execute this inside project dir
+
+```shell
+rm -f ./BUILD/LPC1768/GCC_ARM/mbed_os_nfc_shield.bin ; mbed compile && cp ./BUILD/LPC1768/GCC_ARM/mbed_os_nfc_shield.bin /media/$(whoami)/MBED && sudo sync
+```
