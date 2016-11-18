@@ -6,7 +6,7 @@
 namespace NfcShield {
 
   class GloballyUniqueIdentifier {
-    private:
+    public:
       static const unsigned int GUID_SIZE = 6;
 
     private:

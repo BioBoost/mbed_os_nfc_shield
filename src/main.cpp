@@ -2,9 +2,12 @@
 #include "rtos.h"
 #include "log.h"
 #include "nfc_identification_device.h"
+#include "Simple-LoRaWAN.h"
+#include "settings.h"
 
 Serial pc(USBTX, USBRX);
 DigitalOut aliveLed(LED1);
+SimpleLoRaWAN::Node* node;
 
 void show_alive_led(void const *args) {
   while (true) {
@@ -15,6 +18,9 @@ void show_alive_led(void const *args) {
 
 void process_guid(std::string guid) {
   SimplyLog::Log::i("GUID: %s\r\n", guid.c_str());
+  char buffer[guid.length()+1];
+  strcpy(buffer, guid.c_str());
+  node->send(buffer, sizeof(buffer)-1);
 }
 
 void read_nfc_tag(void const *args) {
@@ -27,13 +33,21 @@ void read_nfc_tag(void const *args) {
   }
 }
 
+void init()
+{
+  SimplyLog::Log::i("Creating lora node in ABP mode\r\n");
+  node = new SimpleLoRaWAN::ABP::Node(devAddr, nwksKey, appKey);
+  node->disableLinkCheck();
+}
+
 int main() {
   SimplyLog::Log::i("Booting NFC PN532 LoraWan node ...\r\n");
+  init();
 
   Thread alive_thread(show_alive_led);
   Thread nfc_read_thread(read_nfc_tag);
 
   while (true) {
-    Thread::wait(500);
+    node->process();
   }
 }
